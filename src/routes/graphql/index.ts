@@ -15,14 +15,26 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       },
     },
     async handler(req) {
-      // return graphql();
+
+      const { data, errors } = await graphql({
+        schema: myGraphQlSchema,
+        source: req.body.query,
+        variableValues: req.body.variables,
+        contextValue: {
+          db: prisma,
+        }
+
+      });
+
+      return { data, errors };
     },
   });
 };
 
-/*
+
 
 export default plugin;
+/*
 fastify.route({
   url: '/',
   method: 'GET',
