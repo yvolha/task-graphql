@@ -1,6 +1,12 @@
-import {GraphQLFloat, GraphQLObjectType, GraphQLString } from "graphql";
-import { UUIDType } from "./types/uuid.js";
+import {
+  GraphQLFloat, 
+  GraphQLObjectType,
+  GraphQLString,
+} from "graphql";
 import { PrismaClient } from "@prisma/client";
+
+import { UUIDType } from "./types/uuid.js";
+
 
 type Context = {
 	prisma: PrismaClient,
