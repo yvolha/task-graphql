@@ -1,9 +1,14 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema } from './schemas.js';
 import { graphql } from 'graphql';
+import { myGraphQlSchema } from './types.js';
+import { Context } from './types/context.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
+  const context: Context = {
+    prisma: prisma,
+  }
 
   fastify.route({
     url: '/',
@@ -16,14 +21,11 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     },
     async handler(req) {
 
-      const { data, errors } = await graphql({
+      const {data, errors} = await graphql({
         schema: myGraphQlSchema,
         source: req.body.query,
         variableValues: req.body.variables,
-        contextValue: {
-          db: prisma,
-        }
-
+        contextValue: context,
       });
 
       return { data, errors };
@@ -32,42 +34,4 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 };
 
 
-
 export default plugin;
-/*
-fastify.route({
-  url: '/',
-  method: 'GET',
-  schema: {
-    response: {
-      200: Type.Array(profileSchema),
-    },
-  },
-  async handler() {
-    return prisma.profile.findMany();
-  },
-});
-
-fastify.route({
-  url: '/:profileId',
-  method: 'GET',
-  schema: {
-    ...getProfileByIdSchema,
-    response: {
-      200: profileSchema,
-      404: Type.Null(),
-    },
-  },
-  async handler(req) {
-    const profile = await prisma.profile.findUnique({
-      where: {
-        id: req.params.profileId,
-      },
-    });
-    if (profile === null) {
-      throw httpErrors.notFound();
-    }
-    return profile;
-  },
-});
-*/
