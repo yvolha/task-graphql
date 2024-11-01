@@ -15,7 +15,6 @@ export const userType = new GraphQLObjectType({
 	},
 })
 
-
 export const queryType = new GraphQLObjectType({
   name: "Query",
   fields: {
