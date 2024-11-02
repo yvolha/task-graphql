@@ -1,19 +1,28 @@
 import { UUID } from "crypto";
+import { IMeberTypeId } from "./member-type.js";
 
-export type ICreatePostInput = {
+export type IChangePostInput = {
   title: string;
   content: string;
-  authorId: UUID;
 }
-  
-export type ICreateProfileInput = {
+
+export type IChangeProfileInput = {
   isMale: boolean;
   yearOfBirth: number;
-  userId: UUID;
-  memberTypeId: "BASIC" | "BUSINESS";
+  memberTypeId: IMeberTypeId;
 }
-  
-export type ICreateUserInput = {
+
+export type IChangeUserInput = {
   name: string;
   balance: number;
 }
+
+export type ICreatePostInput = IChangePostInput & {
+  authorId: UUID;
+}
+  
+export type ICreateProfileInput = IChangeProfileInput & {
+  userId: UUID;
+}
+  
+export type ICreateUserInput = IChangeUserInput;
