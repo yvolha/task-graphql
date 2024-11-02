@@ -30,7 +30,45 @@ export const userType = new GraphQLObjectType({
             },
           });
         },
-      }
+      },
+      posts: {
+        type: new GraphQLList(postType),
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.post.findMany({
+            where: {
+              authorId: id,
+            },
+          });
+        },
+      },
+      userSubscribedTo: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.user.findMany({
+            where: {
+              subscribedToUser: {
+                some: {
+                  subscriberId: id,
+                },
+              },
+            },
+          });
+        },
+      },
+      subscribedToUser: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.user.findMany({
+            where: {
+              userSubscribedTo: {
+                some: {
+                  authorId: id,
+                },
+              },
+            },
+          });
+        },
+      },
 	}),
 })
 
@@ -63,6 +101,16 @@ export const profileType = new GraphQLObjectType({
     id: {type: UUIDType},
     isMale: {type: GraphQLBoolean},
     yearOfBirth: {type: GraphQLInt},
+    memberType: {
+      type: memberTypeType,
+      resolve: ({ memberTypeId }: IProfile, _args, { prisma }: Context) => {
+        return prisma.memberType.findUnique({
+          where: {
+            id: memberTypeId,
+          },
+        });
+      },
+    }
 	}),
 })
 
@@ -81,6 +129,7 @@ export const queryType = new GraphQLObjectType({
     },
 
     user: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       type: userType,
       args: { id: { type: UUIDType }},
       resolve: (_obj, { id }: IUser, { prisma }: Context) => {
