@@ -1,18 +1,20 @@
+import { UUID } from "crypto";
+
 export type IMemberType = {
-  id: string;
+  id: "BASIC" | "BUSINESS";
   discount: number;
   postsLimitPerMonth: number;
 }
 
 export type IPost = {
-  id: string;
+  id: UUID;
   title: string;
   content: string;
-  authorId: string;
+  authorId: UUID;
 }
 
 export type IProfile = {
-  id: string;
+  id: UUID;
   isMale: boolean;
   yearOfBirth: number;
   userId: string;
@@ -20,15 +22,15 @@ export type IProfile = {
 }
 
 export type IUser = {
-  id: string;
+  id: UUID;
   name: string;
   balance: number;
   userSubscribedTo?: {
-    subscriberId: string;
-    authorId: string;
+    subscriberId: UUID;
+    authorId: UUID;
   }[];
   subscribedToUser?: {
-    subscriberId: string;
-    authorId: string;
+    subscriberId: UUID;
+    authorId: UUID;
   }[];
 };
