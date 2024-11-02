@@ -1,7 +1,8 @@
 import { UUID } from "crypto";
+import { IMeberTypeId } from "./member-type.js";
 
 export type IMemberType = {
-  id: "BASIC" | "BUSINESS";
+  id: IMeberTypeId;
   discount: number;
   postsLimitPerMonth: number;
 }
