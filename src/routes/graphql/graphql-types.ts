@@ -10,6 +10,7 @@ import {
 
 import { UUIDType } from "./types/uuid.js";
 import { Context } from "./types/context.js";
+import { IMemberType } from "./types/fields.js";
 
 
 
@@ -62,24 +63,46 @@ export const profileType = new GraphQLObjectType({
 export const queryType = new GraphQLObjectType({
   name: "Query",
   fields: () => ({
+    // users
     users: {
       type: new GraphQLList(userType),
-      resolve: async (_obj, _args, { prisma }: Context) => {
+      resolve: async (_obj, _args, { prisma }: Context) => { 
         return await prisma.user.findMany();
       },
     },
+
+    // memberTypes
     memberTypes: {
       type: new GraphQLList(memberTypeType),
       resolve: async (_obj, _args, { prisma }: Context) => {
         return await prisma.memberType.findMany();
       },
     },
+
+    memberType: {
+      type: memberTypeType,
+      args: { id: 
+        { type: GraphQLString },
+      },
+      resolve: async (_obj, { id }: IMemberType, { prisma }: Context) => {
+        console.log('_obj:',_obj,'\n\n_args:', id)
+        return await prisma.memberType.findUnique({
+          where: {
+            id,
+          },
+        });;
+      },
+    },
+
+    // posts
     posts: {
       type: new GraphQLList(postType),
       resolve: async (_obj, _args, { prisma }: Context) => {
         return await prisma.post.findMany();
       },
     },
+
+    // profiles
     profiles: {
       type: new GraphQLList(profileType),
       resolve: async (_obj, _args, { prisma }: Context) => {
