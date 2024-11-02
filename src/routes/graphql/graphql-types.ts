@@ -41,6 +41,34 @@ export const userType = new GraphQLObjectType({
           });
         },
       },
+      userSubscribedTo: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.user.findMany({
+            where: {
+              subscribedToUser: {
+                some: {
+                  subscriberId: id,
+                },
+              },
+            },
+          });
+        },
+      },
+      subscribedToUser: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.user.findMany({
+            where: {
+              userSubscribedTo: {
+                some: {
+                  authorId: id,
+                },
+              },
+            },
+          });
+        },
+      },
 	}),
 })
 
@@ -101,6 +129,7 @@ export const queryType = new GraphQLObjectType({
     },
 
     user: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       type: userType,
       args: { id: { type: UUIDType }},
       resolve: (_obj, { id }: IUser, { prisma }: Context) => {
