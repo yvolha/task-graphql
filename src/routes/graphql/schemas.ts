@@ -26,4 +26,3 @@ export const myGraphQlSchema = new GraphQLSchema({
   query: queryType,
   mutation: mutationType,
 })
-

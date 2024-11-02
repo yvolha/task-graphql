@@ -9,7 +9,7 @@ import {
 
 import { UUIDType } from "./types/uuid.js";
 import { Context } from "./types/context.js";
-import { IMemberType, IPost, IProfile, IUser } from "./types/fields.js";
+import { IMemberType, IPost, IProfile, IUser } from "./types/query-fields.js";
 import { MemberTypeId } from "./types/member-type.js";
 
 
