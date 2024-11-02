@@ -12,6 +12,11 @@ interface DtoType<T> {
   id?: UUID;
 };
 
+interface SubscriptionInfo {
+  userId: UUID,
+  authorId: UUID,
+}
+
 //users
 const createUserInput = new GraphQLInputObjectType({
   name: 'CreateUserInput',
@@ -106,6 +111,40 @@ export const mutationType = new GraphQLObjectType({
           where: { id },
         });
       },
+    },
+
+    subscribeTo: {
+      type: GraphQLString,
+      args: {
+        userId: { type: new GraphQLNonNull(UUIDType) },
+        authorId: { type: new GraphQLNonNull(UUIDType) }
+      },
+      resolve: async (_obj, { userId, authorId }: SubscriptionInfo, { prisma }) => {
+        await prisma.subscribersOnAuthors.create({
+          data: {
+            subscriberId: userId,
+            authorId: authorId,
+          },
+        });
+      }
+    },
+
+    unsubscribeFrom: {
+      type: GraphQLString,
+      args: {
+        userId: { type: new GraphQLNonNull(UUIDType) },
+        authorId: { type: new GraphQLNonNull(UUIDType) }
+      },
+      resolve: async (_obj, { userId, authorId }: SubscriptionInfo, { prisma }) => {
+        await prisma.subscribersOnAuthors.delete({
+          where: {
+            subscriberId_authorId: {
+              subscriberId: userId,
+              authorId: authorId,
+            },
+          },
+        });
+      }
     },
 
     // profiles
