@@ -4,7 +4,6 @@ import {
   GraphQLInt, 
   GraphQLList, 
   GraphQLObjectType,
-  GraphQLSchema,
   GraphQLString,
 } from "graphql";
 
@@ -115,7 +114,6 @@ export const profileType = new GraphQLObjectType({
 })
 
 
-
 // root query
 export const queryType = new GraphQLObjectType({
   name: "Query",
@@ -201,8 +199,4 @@ export const queryType = new GraphQLObjectType({
       },
     },
   }),
-})
-
-export const myGraphQlSchema = new GraphQLSchema({
-  query: queryType,
 })
