@@ -21,6 +21,16 @@ export const userType = new GraphQLObjectType({
 			id: {type: UUIDType},
 			name: {type: GraphQLString},
 			balance: {type: GraphQLFloat},
+      profile: {
+        type: profileType,
+        resolve: ({ id }: IUser, _args, { prisma }: Context) => {
+          return prisma.profile.findUnique({
+            where: {
+              userId: id,
+            },
+          });
+        },
+      }
 	}),
 })
 
