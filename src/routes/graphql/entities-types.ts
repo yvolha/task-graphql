@@ -78,9 +78,9 @@ export const userType = new GraphQLObjectType({
   export const postType = new GraphQLObjectType({
     name: "Post",
       fields: () => ({
-      id:  {type: UUIDType},
-      title: {type: GraphQLString},
-      content: {type: GraphQLString},
+        id:  {type: UUIDType},
+        title: {type: GraphQLString},
+        content: {type: GraphQLString},
       }),
   })
   
