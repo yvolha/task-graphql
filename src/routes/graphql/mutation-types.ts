@@ -54,7 +54,6 @@ const changeProfileInput = new GraphQLInputObjectType({
   },
 });
 
-
 // posts
 const createPostInput = new GraphQLInputObjectType({
   name: 'CreatePostInput',
