@@ -4,14 +4,12 @@ import depthLimit from 'graphql-depth-limit'
 
 import { createGqlResponseSchema, gqlResponseSchema, myGraphQlSchema } from './schemas.js';
 import { Context } from './types/context.js';
+import { createLoaders } from './create-loaders.js';
 
 const MAX_DEPTH_LIMIT = 5;
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
-  const context: Context = {
-    prisma: prisma,
-  }
 
   fastify.route({
     url: '/',
@@ -37,7 +35,10 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         schema: myGraphQlSchema,
         source: query,
         variableValues: variables,
-        contextValue: context,
+        contextValue: {
+          prisma: prisma,
+          ...createLoaders(prisma),
+        } as Context,
       });
 
       return { data, errors };
