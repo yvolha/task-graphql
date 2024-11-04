@@ -6,60 +6,36 @@ import { MemberTypeId } from "./types/member-type.js";
 
 // users
 export const userType = new GraphQLObjectType({
-    name: "User",
-      fields: () => ({
-              id: {type: UUIDType},
-              name: {type: GraphQLString},
-              balance: {type: GraphQLFloat},
-        profile: {
-          type: profileType,
-          resolve: ({ id }: IUser, _args, { prisma }: Context) => {
-            return prisma.profile.findUnique({
-              where: {
-                userId: id,
-              },
-            });
-          },
+  name: "User",
+    fields: () => ({
+      id: {type: UUIDType},
+      name: {type: GraphQLString},
+      balance: {type: GraphQLFloat},
+      profile: {
+        type: profileType,
+        resolve: ({ id }: IUser, _args, { profilesLoader }: Context) => {
+          return profilesLoader.load(id);
         },
-        posts: {
-          type: new GraphQLList(postType),
-          resolve: ({ id }: IUser, _args, { prisma }: Context) => {
-            return prisma.post.findMany({
-              where: {
-                authorId: id,
-              },
-            });
-          },
+      },
+      posts: {
+        type: new GraphQLList(postType),
+        resolve: ({ id }: IUser, _args, { postsLoader }: Context) => {
+          return postsLoader.load(id);
         },
-        userSubscribedTo: {
-          type: new GraphQLList(userType),
-          resolve: ({ id }: IUser, _args, { prisma }: Context) => {
-            return prisma.user.findMany({
-              where: {
-                subscribedToUser: {
-                  some: {
-                    subscriberId: id,
-                  },
-                },
-              },
-            });
-          },
+      },
+      userSubscribedTo: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { userSubscribedToLoader }: Context) => {
+          return userSubscribedToLoader.load(id)
         },
-        subscribedToUser: {
-          type: new GraphQLList(userType),
-          resolve: ({ id }: IUser, _args, { prisma }: Context) => {
-            return prisma.user.findMany({
-              where: {
-                userSubscribedTo: {
-                  some: {
-                    authorId: id,
-                  },
-                },
-              },
-            });
-          },
+      },
+      subscribedToUser: {
+        type: new GraphQLList(userType),
+        resolve: ({ id }: IUser, _args, { subscribedToUserLoader }: Context) => {
+          return subscribedToUserLoader.load(id);
         },
-      }),
+      },
+    }),
   })
   
   
@@ -67,9 +43,9 @@ export const userType = new GraphQLObjectType({
   export const memberTypeType = new GraphQLObjectType({
     name: "MemberType",
       fields: () => ({
-      id: {type: MemberTypeId },
-      discount: {type: GraphQLFloat},
-      postsLimitPerMonth: {type: GraphQLInt},
+        id: {type: MemberTypeId },
+        discount: {type: GraphQLFloat},
+        postsLimitPerMonth: {type: GraphQLInt},
       }),
   })
   
@@ -93,13 +69,9 @@ export const userType = new GraphQLObjectType({
       yearOfBirth: {type: GraphQLInt},
       memberType: {
         type: memberTypeType,
-        resolve: ({ memberTypeId }: IProfile, _args, { prisma }: Context) => {
-          return prisma.memberType.findUnique({
-            where: {
-              id: memberTypeId,
-            },
-          });
-        },
-      }
+          resolve: ({ memberTypeId }: IProfile, _args, { memberTypeLoader }: Context) => {
+            return memberTypeLoader.load(memberTypeId);
+          },
+        }
       }),
   })

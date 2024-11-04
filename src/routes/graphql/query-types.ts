@@ -8,6 +8,7 @@ import { Context } from "./types/context.js";
 import { IMemberType, IPost, IProfile, IUser } from "./types/query-fields.js";
 import { MemberTypeId } from "./types/member-type.js";
 import { memberTypeType, postType, profileType, userType } from "./entities-types.js";
+import { parseResolveInfo } from "graphql-parse-resolve-info";
 
 
 // root query
@@ -17,8 +18,24 @@ export const queryType = new GraphQLObjectType({
     // users
     users: {
       type: new GraphQLList(userType),
-      resolve: async (_obj, _args, { prisma }: Context) => { 
-        return await prisma.user.findMany();
+      resolve: async (_obj, _args, { prisma }: Context, info) => { 
+
+        const resolveInfo = parseResolveInfo(info);
+        const fields = resolveInfo?.fieldsByTypeName?.User || {};
+        const include: { posts?: boolean, profile?: boolean, userSubscribedTo?: boolean, subscribedToUser?: boolean} = {};
+        if (fields['posts']) {
+          include.posts = true;
+        }
+        if (fields['profile']) {
+          include.profile = true;
+        }
+        if (fields['userSubscribedTo']) {
+          include.userSubscribedTo = true;
+        }
+        if (fields['subscribedToUser']) {
+          include.subscribedToUser = true;
+        }
+        return prisma.user.findMany({ include });
       },
     },
 
